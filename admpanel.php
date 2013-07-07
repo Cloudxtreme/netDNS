@@ -147,7 +147,7 @@
                 <td style="text-align:center;"><?php echo $row['creator']; ?></td>
                 <td style="text-align:center;"><?php echo $row['hostname']; ?></td>         
                 <td style="text-align:center;"><?php echo $row['ip']; ?></td>
-                <td style="text-align:center;"><a href="deldom.php?id=<?php echo $row['id']; ?>"><img width="30" src="img/del.png"></a></td>
+                <td style="text-align:center;"><a href="deldom.php?id=<?php echo $row['id']; ?>"><img width="30" src="img/del.png" onclick="if(confirm('Do you really want to remove this domain?')) return true;else return false"></a></td>
             </tr>
     <?php } ?>
         </table>
@@ -160,7 +160,7 @@
                 </tr>
                 <tr>
                     <td style="text-align:right;">IP</td>
-                    <td><input style="width:110px;" type="text" name="pub_ip" placeholder="IP Address" value="<? //echo $_SERVER['REMOTE_ADDR'];?>" required></td>
+                    <td><input style="width:110px;" type="text" name="pub_ip" placeholder="IP Address" value="<?php //echo $_SERVER['REMOTE_ADDR'];?>" required></td>
                 </tr>
                 <tr><td colspan="2" style="text-align:center;"><input name="pub_creator" type="hidden" value="<?php echo $_SESSION['user']; ?>"><button class="btn btn-primary" type="submit">Add</button></td></tr>
             </table>
@@ -261,11 +261,11 @@
     ?>				<img width="30" src="img/adm.png">
     <?php 			if($_SESSION['user']!=$row['name']) { ?>
                         &nbsp;<a href="authadm.php?id=<?php echo $row['id']; ?>&act=0"><img width="30" src="img/ban.png"></a>
-    <?				} } else {?><a href="authadm.php?id=<?php echo $row['id']; ?>&act=1"><img width="30" src="img/key.png"></a><?php } ?>
+    <?php				} } else {?><a href="authadm.php?id=<?php echo $row['id']; ?>&act=1"><img width="30" src="img/key.png"></a><?php } ?>
                 </td>
                 <td style="text-align:center;">
                     <?php if($row['name']!=$_SESSION['user']) {
-    ?>            	<a href="delacc.php?id=<?php echo $row['id']; ?>"><img width="30" src="img/del.png"></a><?php } ?>
+    ?>            	<a href="delacc.php?id=<?php echo $row['id']; ?>"><img width="30" src="img/del.png" onclick="if(confirm('Do you really want to remove this user?')) return true;else return false"></a><?php } ?>
                 </td>
             </tr>
     <?php } ?>
@@ -278,7 +278,7 @@
 	<h3 style="text-align:center;">Debug Log</h3>
     <?php if(count($_POST)>0){ foreach($_POST as $k=>$v){ echo $k."=".$v."<br>"; } } ?>
     <pre>
-    <?php echo "SESSION:<br>"; var_dump($_SESSION); echo "ARR:<br>"; var_dump($hostnamecheck_arr);var_dump($pubhostnamecheck_arr)?>
+    <?php echo "SESSION:<br>"; var_dump($_SESSION); echo "ARR:<br>"; var_dump($hostnamecheck_arr);var_dump($pubhostnamecheck_arr); ?>
     </pre>
 	
 </div>
