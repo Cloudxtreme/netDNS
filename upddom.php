@@ -13,34 +13,7 @@
 	}
 	try {
 		include('db.php');
-		
-		/*if(isset($_GET['id']))
-		{
-			$domaincheck=$db->query('SELECT * FROM pub_domain WHERE id =\''.$_GET["id"].'\'');
-			$domaincheck_arr=$domaincheck->fetchAll();
-			
-			if(count($domaincheck_arr)==1)
-			{
-				// Prepare Delete statement
-				$delete = "DELETE FROM pub_domain WHERE id = :id";
-								
-				$stmt = $db->prepare ($delete);
-				
-				//Bind parameter to variable
-				$stmt->bindParam (':id', $_GET['id'] );
-					
-				// Execute statement
-				if ($stmt->execute() == FALSE) {
-					$err="Delete domain Error!";
-				} else {
-					$hint="Delete domain successful!";
-				}
-			} else {
-				$err="No domain found!";
-			}
-		} else {
-			$err="Oops! Something wrong!";
-		}*/
+	
 		if(isset($_POST['ip']))
 		{
 			$update = "UPDATE pub_domain SET ip = :ip WHERE id = :id";
@@ -52,9 +25,18 @@
 			if($stmt->execute()==FALSE) {
 				$err="Something wrong with PDO operation. =(";
 			}
-		} else
-			echo 'no ip...';
+			$updateaction=1;
+		} else {
+			$err="Oops! Something wrong!";
+		}
 		
+		if(isset($_POST['id']))
+		{
+			$olddomain=$db->query('SELECT * FROM pub_domain WHERE id =\''.$_POST["id"].'\'');
+			$olddomain_arr=$olddomain->fetchAll();
+		} else {
+			$err="Oops! Something wrong!";
+		}
 		$db = null;
 	}
 	catch (PDOException $e)
@@ -97,12 +79,13 @@
 	if(isset($hint1)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint1; ?></p><?php } 
 	if(isset($err1)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err1; ?></p><?php }
 	
-    if(count($usercheck_arr)==1)
+    if($updateaction==1)
     {
         $file=fopen("/tmp/tmp_nsupdate_".$_SESSION['user'],"w");
         fprintf($file,"server net.nsysu.edu.tw\n");
         fprintf($file,"zone net.nsysu.edu.tw\n");
-        fprintf($file,"update delete %s.net.nsysu.edu.tw\n",$domaincheck_arr[0]['hostname']);
+        fprintf($file,"update delete %s.net.nsysu.edu.tw\n",$olddomain_arr[0]['hostname']);
+		fprintf($file,"update add %s.net.nsysu.edu.tw 604800 A %s\n",$olddomain_arr[0]['hostname'],$olddomain_arr[0]['ip']);
         fprintf($file,"send\n");
         $hint2 = "Script file created.";
     }
@@ -114,7 +97,7 @@
         if($output)
         {
             //echo "<li>".$output."</li>";
-            $hint3 = "Domain deleted.";
+            $hint3 = "Domain updated.";
         } else {
             $err3 = "Something failed...";
         }
