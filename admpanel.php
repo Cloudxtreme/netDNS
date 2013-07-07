@@ -29,13 +29,14 @@
 				if(count($hostnamecheck_arr)==0)
 				{
 					// Prepare INSERT statement to db
-					$insert = "INSERT INTO pub_domain (creator,hostname,ip)
-									VALUES (:name,:hostname,:ip)";
+					$insert = "INSERT INTO pub_domain (creator,type,hostname,ip)
+									VALUES (:name,:type,:hostname,:ip)";
 									
 					$stmt = $db->prepare ($insert);
 					
 						//Bind parameter to variable
 						$stmt->bindParam (':name'		, $_POST['pub_creator'] );
+						$stmt->bindParam (':type'		, $_POST['pub_type'] );
 						$stmt->bindParam (':hostname' 	, $_POST['pub_host'] );
 						$stmt->bindParam (':ip' 		, $_POST['pub_ip'] );
 							
@@ -133,27 +134,35 @@
     <div class="main" style="float:right;">
         <h1 style="text-align:center;">Public Domain</h1>
         
+        <form method="post" id="upddom" action="upddom.php">
         <table class="table table-bordered">
             <tr>
                 <td>ID</td>
                 <td>Creator</td>
-                 <td>Hostname</td>
-                 <td>IP</td>
-                 <td>Delete</td>
+                <td>Type</td>
+                <td>Hostname</td>
+                <td>IP</td>
+                <td>Update</td>
+                <td>Delete</td>
             </tr>
     <?php foreach($pubdomain_arr as $row) { ?>
             <tr>
-                <td style="text-align:center;"><?php echo $row['id']; ?></td>
+                <td style="text-align:center;"><?php echo $row['id']; ?><input name="id" type="hidden" value="<?php echo $row['id']; ?>"></td>
                 <td style="text-align:center;"><?php echo $row['creator']; ?></td>
+                <td style="text-align:center;"><?php echo $row['type']; ?></td>
                 <td style="text-align:center;"><?php echo $row['hostname']; ?></td>         
-                <td style="text-align:center;"><?php echo $row['ip']; ?></td>
+                <td style="text-align:center;"><input style="width:110px" name="ip" type="text" value="<?php echo $row['ip']; ?>"></td>
+                <td style="text-align:center;"><input class="btn btn-warning" type="submit" value="Go!" onclick="if(confirm('Do you really want to update with new IP?')) return true;else return false"></td>
                 <td style="text-align:center;"><a href="deldom.php?id=<?php echo $row['id']; ?>"><img width="30" src="img/del.png" onclick="if(confirm('Do you really want to remove this domain?')) return true;else return false"></a></td>
             </tr>
     <?php } ?>
         </table>
+        </form>
         <h4 style="text-align:center;">Add one immediately</h4>
         <form class="regi" method="post" id="pubdomain">
+        	<input name="pub_type" type="hidden" value="A">
             <table class="table">
+            	<caption>A record</caption>
                 <tr>
                     <td style="text-align:right;">Hostname</td>
                     <td><input style="width:100px;" type="text" name="pub_host" placeholder="Domain name" required>.net.nsysu.edu.tw</td>
