@@ -1,5 +1,5 @@
 <?php
-	$dsn="mysql:host=localhost;dbname=dns_daemon";
+	$dsn="mysql:host=net.nsysu.edu.tw;dbname=dns_daemon";
 	$user='ddns';
 	$password='f5018ddns';
 	// Create (connect to) SQLite database in file
