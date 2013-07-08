@@ -1,4 +1,5 @@
 <?php
+	require('dmapi.php');
 	session_start();
 	if($_SESSION['auth']!=true)
 	{
@@ -37,6 +38,7 @@
 			} else {
 				$err="No domain found!";
 			}
+			//delPublicDomain_DB($_GET['id']);
 		} else {
 			$err="Oops! Something wrong!";
 		}
