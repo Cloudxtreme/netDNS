@@ -25,7 +25,7 @@
     <h4 style="text-align:center;color:#F5F5F5;">net.nsysu.edu.tw</h4>
     <p>&nbsp;</p>
     <?php /*======================== Action Log Block (DB action)========================*/ ?>
-    <div class="main" style="height:300px;float:right; position:relative; top:840px; overflow:auto;">
+    <div class="main" style="height:300px;float:right; position:relative; top:840px; overflow:auto; <?php /*if(isset($err) || isset($hint)) { ?> opacity:1; <?php } else { ?> opacity:0.8; <?php }*/ ?> ">
         <h1 style="text-align:center;">Action Log</h1>
         <?php
 			clearActionTmp($_SESSION['user']);
@@ -106,7 +106,7 @@
                 <td>Creator</td>
                 <td>Type</td>
                 <td>Hostname</td>
-                <td>IP</td>
+                <td>IP / Alias</td>
                 <td>Update</td>
                 <td>Delete</td>
             </tr>

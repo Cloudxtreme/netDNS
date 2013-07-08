@@ -31,39 +31,43 @@ function addUser($name,$pass,$host,$fullname)
 	$usercheck=$GLOBALS['db']->query('SELECT * FROM user_list WHERE name =\''.$name.'\'');
 	$usercheck_arr=$usercheck->fetchAll();
 	/*Check if the user is exist or not */
-			if(count($usercheck_arr)==0)
-			{
-				/*Check if the hostname is registered or not*/
-				if(doubleDomainCheck($host))
-				{
-					// Prepare INSERT statement to db
-					$insert = "INSERT INTO user_list (name,password,hostname,fullname)
-									VALUES (:name,:password,:hostname,:fullname)";
-									
-					$stmt = $GLOBALS['db']->prepare ($insert);
-					
-						//Bind parameter to variable
-						$stmt->bindParam (':name'		, $name );
-						$password=md5($pass);
-						$stmt->bindParam (':password'   , $password );
-						if(strlen($host)!=0 && $host!=NULL) {
-							$stmt->bindParam (':hostname' , $host );
-						} else {
-							$host="";
-							$stmt->bindParam (':hostname' , $host );
-						}
-						$stmt->bindParam (':fullname'		, $fullname );
+	if(count($usercheck_arr)==0)
+	{
+		/*Check if the hostname is registered or not*/
+		if(doubleDomainCheck($host))
+		{
+			// Prepare INSERT statement to db
+			$insert = "INSERT INTO user_list (name,password,hostname,fullname)
+							VALUES (:name,:password,:hostname,:fullname)";
 							
-						// Execute statement
-						if ($stmt->execute() == FALSE) {
-							$err = "Create account failed.";
-						}
-				} else {
-					$err = "The hostname was already registered.";
-				}
+			$stmt = $GLOBALS['db']->prepare ($insert);
+			
+			//Bind parameter to variable
+			$stmt->bindParam (':name'		, $name );
+			$password=md5($pass);
+			$stmt->bindParam (':password'   , $password );
+			if(strlen($host)!=0 && $host!=NULL) {
+				$stmt->bindParam (':hostname' , $host );
 			} else {
-				$err = "The user was already exist.";
+				$host="";
+				$stmt->bindParam (':hostname' , $host );
 			}
+			$stmt->bindParam (':fullname'		, $fullname );
+				
+			// Execute statement
+			if ($stmt->execute() == FALSE) {
+				$err = "Create account failed.";
+			}	else {
+				$hint="Create account successful!";
+			}
+		} else {
+			$err = "The hostname was already registered.";
+		}
+	} else {
+		$err = "The user was already exist.";
+	}
+	if(isset($hint)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint; ?></p><?php } 
+	if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php }
 }
 
 function addPublicDomain_DB($creator,$type,$host,$ip) //Pass domain information
