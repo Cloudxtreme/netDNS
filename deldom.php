@@ -25,6 +25,7 @@
 <div class="log">
 	<h3 style="text-align:center;;">Action Log</h3>
 	<?php
+	clearActionTmp($_SESSION['user']);
 	try {	
 		if(isset($_GET['id']))
 		{
@@ -40,8 +41,6 @@
 	    $db = null;
     }
 	if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php }
-	
-	clearActionTmp($_SESSION['user']);
 	
 	createDelTmp($_SESSION['user'],$domaincheck_arr);
     
