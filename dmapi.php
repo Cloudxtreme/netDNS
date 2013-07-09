@@ -61,7 +61,7 @@ function addUser($name,$pass,$host,$fullname)
 			if ($stmt->execute() == FALSE) {
 				$err = "Create account failed.";
 			}	else {
-				$hint="Create account successful!";
+				$hint="Create account successed!";
 			}
 		}
 	} else {
@@ -91,7 +91,7 @@ function delUser($id)
 		if ($stmt->execute() == FALSE) {
 			$err="Delete account failed!";
 		} else {
-			$hint="Delete account successful!";
+			$hint="Delete account successed!";
 			global $runaction;
 			$runaction=1;
 		}
@@ -115,9 +115,40 @@ function updateUserPass($id,$oldpass,$newpass)
 			$err="Something wrong with PDO operation. =(";
 		}
 		
-		$hint="Password changed successful!";
+		$hint="Password changed successed!";
 	} else { 
 		$err="Password incorrect!";
+	}
+	if(isset($hint)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint; ?></p><?php } 
+	if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php }
+}
+
+function resetUserPass($id)
+{
+	$userCheck=$GLOBALS['db']->query('SELECT * FROM user_list WHERE id =\''.$id.'\'');
+	global $userCheck_arr;
+	$userCheck_arr=$userCheck->fetchAll();
+	
+	if(count($userCheck_arr)==1)
+	{
+		// Prepare Delete statement
+		$delete = "UPDATE user_list SET password = :password WHERE id = :id";
+						
+		$stmt = $GLOBALS['db']->prepare ($delete);
+		
+		//Bind parameter to variable
+		$stmt->bindParam (':id', $id );
+		$password=md5('1234');
+		$stmt->bindParam(':password', $password);
+			
+		// Execute statement
+		if ($stmt->execute() == FALSE) {
+			$err="Reset password failed!";
+		} else {
+			$hint="Reset password successed!<br>The default password is 1234, please change the password after login!";
+		}
+	} else {
+		$err="No user found!";
 	}
 	if(isset($hint)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint; ?></p><?php } 
 	if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php }
@@ -144,7 +175,7 @@ function addPublicDomain_DB($creator,$type,$host,$ip) //Pass domain information
 			if ($stmt->execute() == FALSE) {
 				$err = "Add domain error.";
 			} else {
-				$hint="Add domain successful!";
+				$hint="Add domain successed!";
 				global $runaction;
 				$runaction=1;
 			}
@@ -178,7 +209,7 @@ function delPublicDomain_DB($id) //Pass domain ID
 		if ($stmt->execute() == FALSE) {
 			$err="Delete domain Error!";
 		} else {
-			$hint="Delete domain successful!";
+			$hint="Delete domain successed!";
 			global $runaction;
 			$runaction=1;
 		}
@@ -218,7 +249,7 @@ function updatePersonalDomain_DB($id,$host)
 	} else {
 		global $runaction;
 		$runaction=1;
-		$hint="Hostname successful change! <br> Don't forget to restart the daemon!";
+		$hint="Hostname successed change! <br> Don't forget to restart the daemon!";
 	}
 }
 

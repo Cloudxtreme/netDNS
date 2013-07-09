@@ -25,7 +25,7 @@
     <h4 style="text-align:center;color:#F5F5F5;">net.nsysu.edu.tw</h4>
     <p>&nbsp;</p>
     <?php /*======================== Action Log Block (DB action)========================*/ ?>
-    <div class="main" style="height:300px;float:right; position:relative; top:840px; overflow:auto; <?php /*if(isset($err) || isset($hint)) { ?> opacity:1; <?php } else { ?> opacity:0.8; <?php }*/ ?> ">
+    <div class="main" style="height:280px;float:right; position:relative; top:820px; overflow:auto; <?php /*if(isset($err) || isset($hint)) { ?> opacity:1; <?php } else { ?> opacity:0.8; <?php }*/ ?> ">
         <h1 style="text-align:center;">Action Log</h1>
         <?php
 			clearActionTmp($_SESSION['user']);
@@ -99,7 +99,7 @@
     </div>
     
     <?php /*======================== Public Domain Block ========================*/ ?>
-    <div class="main" style="height:780px;float:right; position:relative; top:-350px; overflow:auto;">
+    <div class="main" style="height:780px;float:right; position:relative; top:-310px; overflow:auto;">
         <h1 style="text-align:center;">Public Domain</h1>
         
         <form method="post" id="upddom" action="upddom.php">
@@ -167,7 +167,7 @@
                 <td style="text-align:center;"><?php echo $row['id']; ?></td>
                 <td style="text-align:center;"><?php echo $row['name']; ?></td>
                 <td style="text-align:center;"><?php echo $row['fullname']; ?></td>
-                <td style="text-align:center;"><img width="30" src="img/reset.png"></td>
+                <td style="text-align:center;"><a href="rstAccPass.php?id=<?php echo $row['id']; ?>"><img width="30" src="img/reset.png" onclick="if(confirm('Do you really want to reset user password to 1234?')) return true;else return false"></a></td>
                 <td style="text-align:center;"><?php echo $row['hostname']; ?></td>
                 <td style="text-align:center;">
                     <?php if($row['admin']==1) { 
