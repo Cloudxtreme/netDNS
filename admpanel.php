@@ -57,8 +57,11 @@
 			}
 			if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php }
 			
-			createUpdateTmp($_SESSION['user'],$new_pd_arr);
-        
+			if($_POST['pub_type']=='A') //Type A record
+				createUpdateTmp($_SESSION['user'],$new_pd_arr);
+			else if($_POST['pub_type']=='C') //Type CNAME record
+				createCnameTmp($_SESSION['user'],$new_pd_arr);
+				  
 			execDNSaction($_SESSION['user'],"created");
 		?>
     </div>
@@ -140,7 +143,7 @@
                     <td style="text-align:right;">IP/Alias</td>
                     <td><input style="width:120px;" type="text" name="pub_ip" placeholder="IP Address or Alias" value="<?php //echo $_SERVER['REMOTE_ADDR'];?>" required></td>
                 </tr>
-                <tr><td colspan="2" style="text-align:center;"><input name="pub_creator" type="hidden" value="<?php echo $_SESSION['user']; ?>"><button class="btn btn-primary" type="submit">Add</button></td></tr>
+                <tr><td colspan="2" style="text-align:center;"><input name="pub_creator" type="hidden" value="<?php echo $_SESSION['user']; ?>"><button class="btn btn-primary" type="submit" onclick="if(confirm('Is the information correct?')) return true;else return false">Add</button></td></tr>
             </table>
         </form>
     </div>

@@ -194,6 +194,21 @@ function createUpdateTmp($user,$data)
 	if(isset($hint)) { ?><p style="text-align:center; color:#3C0;"><?php echo $hint; ?></p><?php }
 }
 
+function createCnameTmp($user,$data)
+{
+	if($GLOBALS['runaction']==1)
+    {
+        $file=fopen("/tmp/tmp_nsupdate_".$user,"w");
+        fprintf($file,"server net.nsysu.edu.tw\n");
+        fprintf($file,"zone net.nsysu.edu.tw\n");
+        fprintf($file,"update delete %s.net.nsysu.edu.tw cname\n",$data[0]['hostname']);
+		fprintf($file,"update add %s.net.nsysu.edu.tw 600 cname %s.net.nsysu.edu.tw\n",$data[0]['hostname'],$data[0]['ip']);
+        fprintf($file,"send\n");
+        $hint = "CNAME script file created.";
+    }
+	if(isset($hint)) { ?><p style="text-align:center; color:#3C0;"><?php echo $hint; ?></p><?php }
+}
+
 function execDNSaction($user,$action) //Pass $_SESSION['user'] & action string
 {
 	if(file_exists("/tmp/tmp_nsupdate_".$user))
