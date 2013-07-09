@@ -1,22 +1,21 @@
 <?php
-	try {
-		include('db.php');
-		
-		session_start();
-		if($_SESSION['auth']==true)
+	require('db.php');
+	session_start();
+	if($_SESSION['auth']==true)
+	{
+		if($_SESSION['admin']==true)
 		{
-			if($_SESSION['admin']==true)
-			{
-				header('Location: admpanel.php');
-				exit;
-			}
-			else
-			{
-				header('Location: udomain.php');
-				exit;
-			}
+			header('Location: admpanel.php');
+			exit;
 		}
+		else
+		{
+			header('Location: udomain.php');
+			exit;
+		}
+	}
 		
+	try {	
 		if(isset($_POST['name']))
 		{
 			$usercheck=$db->query('SELECT * FROM user_list WHERE name =\''.$_POST["name"].'\'');
@@ -55,7 +54,7 @@
 	}
 	catch (PDOException $e)
     {
-	    echo 'DB operation failed!<br>' . $e->getMessage () . '<br>';
+	    $err = 'Database operation failed!<br>' . $e->getMessage () . '<br>';
 	    $db = null;
     }
 	
@@ -93,13 +92,6 @@
 </div>
 
 <p>&nbsp;</p>
-<?php /*
-<div class="log"">
-	<h3 style="text-align:center;">Debug Log</h3>
-    <?php if(count($_POST)>0){ foreach($_POST as $k=>$v){ echo $k."=".$v."<br>"; } } ?>
-	
-</div>
-*/ ?>
 
 </body>
 </html>

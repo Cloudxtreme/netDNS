@@ -1,7 +1,3 @@
-<?php
-	//header('Location:login.php');
-?>
-
 <html>
 <head>
 <title>DNS Management System</title>
