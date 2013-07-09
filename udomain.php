@@ -2,49 +2,16 @@
 	require('dmapi.php');
 	require('db.php');
 	session_start();
-	permissionCheck($_SESSION['auth']);
-	
+	permissionCheck($_SESSION['auth']);	
 	try {
 		$usercheck=$db->query('SELECT * FROM user_list WHERE name =\''.$_SESSION['user'].'\'');
 		$usercheck_arr=$usercheck->fetchAll();
-		$hostnamecheck=$db->query('SELECT * FROM user_list WHERE hostname =\''.$_POST["hostname"].'\'');
-		$hostnamecheck_arr=$hostnamecheck->fetchAll();
-		
-		/*If the field "hostname" change and not blank*/
-		if($_POST['hostname']!="" && $_POST['hostname']!=$usercheck_arr[0]['hostname']) {
-			if(doubleDomainCheck($_POST['hostname']))
-			{
-				/*Check user password */
-				if(md5($_POST['oldpassword'])==$usercheck_arr[0]['password']) {
-					updatePersonalDomain_DB($usercheck_arr[0]['id'],$_POST['hostname']);
-					$_SESSION['oldhostname']=$usercheck_arr[0]['hostname'];	
-				}
-			}
-		}
-		/*If user set a newpassword*/
-		if(isset($_POST['newpassword']) && $_POST['newpassword']!="") {
-			/*If both the password field is the same*/
-			if($_POST['newpassword']==$_POST['cm_newpassword']) {
-				updateUserPass($usercheck_arr[0]['id'],$_POST['oldpassword'],$_POST['newpassword']);
-			} else {
-				$err="Password not match!";
-			}
-		}
-		
-		//Refesh User Data
-		if(isset($_SESSION['user']))
-		{
-			$usercheck=$db->query('SELECT * FROM user_list WHERE name =\''.$_SESSION['user'].'\'');
-			$usercheck_arr=$usercheck->fetchAll();
-		}
-		
-		$db = null;
 	}
 	catch (PDOException $e)
     {
 	    $err = 'Database operation failed!<br>' . $e->getMessage () . '<br>';
 	    $db = null;
-    }	
+    }
 ?>
 <!doctype html>
 <html>
@@ -97,12 +64,43 @@
             </tr>
 		</table>
     </form>
-    <?php if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php } ?>
+    
 </div>
 <p>&nbsp; </p>
 <div class="log">
 	<h3 style="text-align:center;">Action Log</h3>
 	<?php
+	try {
+		$hostnamecheck=$db->query('SELECT * FROM user_list WHERE hostname =\''.$_POST["hostname"].'\'');
+		$hostnamecheck_arr=$hostnamecheck->fetchAll();
+		
+		/*If the field "hostname" change and not blank*/
+		if($_POST['hostname']!="" && $_POST['hostname']!=$usercheck_arr[0]['hostname']) {
+			if(doubleDomainCheck($_POST['hostname']))
+			{
+				/*Check user password */
+				if(md5($_POST['oldpassword'])==$usercheck_arr[0]['password']) {
+					updatePersonalDomain_DB($usercheck_arr[0]['id'],$_POST['hostname']);
+					$_SESSION['oldhostname']=$usercheck_arr[0]['hostname'];	
+				}
+			}
+		}
+		/*If user set a newpassword*/
+		if(isset($_POST['newpassword']) && $_POST['newpassword']!="") {
+			/*If both the password field is the same*/
+			if($_POST['newpassword']==$_POST['cm_newpassword']) {
+				updateUserPass($usercheck_arr[0]['id'],$_POST['oldpassword'],$_POST['newpassword']);
+			} else {
+				$err="Password not match!";
+			}
+		}
+	}
+	catch (PDOException $e)
+    {
+	    $err = 'Database operation failed!<br>' . $e->getMessage () . '<br>';
+	    $db = null;
+    }
+	 if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php } 
 	clearActionTmp($_SESSION['user']);
 	
 	$data[0]['hostname']=$_SESSION['oldhostname'];

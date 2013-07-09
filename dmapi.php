@@ -63,8 +63,6 @@ function addUser($name,$pass,$host,$fullname)
 			}	else {
 				$hint="Create account successful!";
 			}
-		} else {
-			$err = "The hostname was already registered.";
 		}
 	} else {
 		$err = "The user was already exist.";

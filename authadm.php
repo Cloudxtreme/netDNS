@@ -1,15 +1,8 @@
 <?php
 	session_start();
-	if($_SESSION['auth']!=true)
-	{
-		header('Location: permissiondeny.php');
-		exit;
-	}
-	if($_SESSION['admin']!=true)
-	{
-		header('Location: permissiondeny.php');
-		exit;
-	}
+	require('db.php');
+	permissionCheck($_SESSION['auth']);
+	permissionCheck($_SESSION['admin']);
 	
 	if($_GET['act']==1)
 		$act=1;
@@ -19,8 +12,6 @@
 		$act=99;
 			
 	try {
-		include('db.php');
-		
 		if(isset($_GET['id'])&&$act!=99)
 		{
 			$usercheck=$db->query('SELECT * FROM user_list WHERE id =\''.$_GET["id"].'\'');
@@ -78,16 +69,6 @@
     <?php if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php } ?>
     <?php if(isset($hint)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint; ?></p><?php } ?>
 </div>
-<?php /*
-<p>&nbsp;</p>
-<div class="log">
-	<h3 style="text-align:center;">Debug Log</h3>
-    <?php if(count($_POST)>0){ foreach($_POST as $k=>$v){ echo $k."=".$v."<br>"; } } ?>
-    <?php var_dump($_GET); ?>
-     <?php var_dump($usercheck_arr); ?>
-	
-</div>
-*/ ?>
 
 </body>
 </html>
