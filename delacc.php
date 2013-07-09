@@ -1,54 +1,9 @@
 <?php
+	require('dmapi.php');
+	require('db.php');
 	session_start();
-	if($_SESSION['auth']!=true)
-	{
-		header('Location: permissiondeny.php');
-		exit;
-	}
-	if($_SESSION['admin']!=true)
-	{
-		header('Location: permissiondeny.php');
-		exit;
-	}
-	try {
-		include('db.php');
-		
-		if(isset($_GET['id']))
-		{
-			$usercheck=$db->query('SELECT * FROM user_list WHERE id =\''.$_GET["id"].'\'');
-			$usercheck_arr=$usercheck->fetchAll();
-			
-			if(count($usercheck_arr)==1)
-			{
-				// Prepare Delete statement
-				$delete = "DELETE FROM user_list WHERE id = :id";
-								
-				$stmt = $db->prepare ($delete);
-				
-				//Bind parameter to variable
-				$stmt->bindParam (':id', $_GET['id'] );
-					
-				// Execute statement
-				if ($stmt->execute() == FALSE) {
-					$err="Delete account Error!";
-				} else {
-					$hint="Delete account successful!";
-				}
-			} else {
-				$err="No user found!";
-			}
-		} else {
-			$err="Oops! Something wrong!";
-		}
-		
-		$db = null;
-	}
-	catch (PDOException $e)
-    {
-	    echo 'DB operation failed!<br>' . $e->getMessage () . '<br>';
-	    $db = null;
-    }
-	
+	permissionCheck($_SESSION['auth']);
+	permissionCheck($_SESSION['admin']);
 ?>
 <!doctype html>
 <html>
@@ -73,54 +28,28 @@
 <div class="log">
 	<h3 style="text-align:center;">Action Log</h3>
 	<?php
-    if(file_exists("/tmp/tmp_nsupdate_".$_SESSION['user']))
+	clearActionTmp($_SESSION['user']);
+	try {
+		if(isset($_GET['id']))
+		{
+			delUser($_GET['id']);
+		} else {
+			$err="Oops! Something wrong!";
+		}
+		$db = null;
+	}
+	catch (PDOException $e)
     {
-        if(unlink("/tmp/tmp_nsupdate_".$_SESSION['user']))
-            $hint1 = "Delete tmp file.<br>";
-        else
-            $err1 = "Delete tmp file error!(file not found?)<br>";
+	    $err = 'Database operation failed!<br>' . $e->getMessage () . '<br>';
+	    $db = null;
     }
-	if(isset($hint1)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint1; ?></p><?php } 
-	if(isset($err1)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err1; ?></p><?php }
+	if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php }
 	
-    if(count($usercheck_arr)==1)
-    {
-        $file=fopen("/tmp/tmp_nsupdate_".$_SESSION['user'],"w");
-        fprintf($file,"server net.nsysu.edu.tw\n");
-        fprintf($file,"zone net.nsysu.edu.tw\n");
-        fprintf($file,"update delete %s.net.nsysu.edu.tw\n",$usercheck_arr[0]['hostname']);
-       
-        fprintf($file,"send\n");
-        $hint2 = "Script file created.";
-    }
-	if(isset($hint2)) { ?><p style="text-align:center; color:#3C0;"><?php echo $hint2; ?></p><?php }
+	createDelTmp($_SESSION['user'],$userCheck_arr);
     
-    if(file_exists("/tmp/tmp_nsupdate_".$_SESSION['user']))
-    {
-        $output=nl2br(shell_exec("/usr/bin/sudo /usr/bin/nsupdate -d -k /etc/bind/Knet.nsysu.+157+55142.key /tmp/tmp_nsupdate_".$_SESSION['user']));
-        if($output)
-        {
-            //echo "<li>".$output."</li>";
-            $hint3 = "Domain deleted.";
-        } else {
-            $err3 = "Something failed...";
-        }
-    }
-	if(isset($hint3)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint3; ?></p><?php }
-	if(isset($err3)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err3; ?></p><?php }
+	execDNSaction($_SESSION['user'],"deleted");
 ?>
 </div>
-<?php /*
-<p>&nbsp;</p>
-<div class="log">
-	<h3 style="text-align:center;">Debug Log</h3>
-    <?php if(count($_POST)>0){ foreach($_POST as $k=>$v){ echo $k."=".$v."<br>"; } } ?>
-    <?php var_dump($_GET); ?>
-     <?php var_dump($usercheck_arr); ?>
-	
-</div>
-*/ ?>
-
 </body>
 </html>
 <script language="javascript">

@@ -70,6 +70,35 @@ function addUser($name,$pass,$host,$fullname)
 	if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php }
 }
 
+function delUser($id)
+{
+	$userCheck=$GLOBALS['db']->query('SELECT * FROM user_list WHERE id =\''.$id.'\'');
+	global $userCheck_arr;
+	$userCheck_arr=$userCheck->fetchAll();
+	
+	if(count($userCheck_arr)==1)
+	{
+		// Prepare Delete statement
+		$delete = "DELETE FROM user_list WHERE id = :id";
+						
+		$stmt = $GLOBALS['db']->prepare ($delete);
+		
+		//Bind parameter to variable
+		$stmt->bindParam (':id', $id );
+			
+		// Execute statement
+		if ($stmt->execute() == FALSE) {
+			$err="Delete account failed!";
+		} else {
+			$hint="Delete account successful!";
+			global $runaction;
+			$runaction=1;
+		}
+	} else {
+		$err="No user found!";
+	}
+}
+
 function addPublicDomain_DB($creator,$type,$host,$ip) //Pass domain information
 {
 	//Check if the hostname is registered or not
@@ -225,7 +254,4 @@ function execDNSaction($user,$action) //Pass $_SESSION['user'] & action string
 	if(isset($hint)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint; ?></p><?php }
 	if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php }
 }
-
-
-
 ?>
