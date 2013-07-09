@@ -1,82 +1,33 @@
 <?php
+	require('dmapi.php');
+	require('db.php');
 	session_start();
-	if($_SESSION['auth']!=true)
-	{
-		header('Location: permissiondeny.php');
-		exit;
-	}
+	permissionCheck($_SESSION['auth']);
 	
 	try {
-		include('db.php');
-		
-		if(isset($_SESSION['user']))
-		{
-			$usercheck=$db->query('SELECT * FROM user_list WHERE name =\''.$_SESSION['user'].'\'');
-			$usercheck_arr=$usercheck->fetchAll();
-			$hostnamecheck=$db->query('SELECT * FROM user_list WHERE hostname =\''.$_POST["hostname"].'\'');
-			$hostnamecheck_arr=$hostnamecheck->fetchAll();
-			
-			if(count($usercheck_arr)==0)
-			{
-				$err="Something wrong! :(((";
-			}	
-		}
+		$usercheck=$db->query('SELECT * FROM user_list WHERE name =\''.$_SESSION['user'].'\'');
+		$usercheck_arr=$usercheck->fetchAll();
+		$hostnamecheck=$db->query('SELECT * FROM user_list WHERE hostname =\''.$_POST["hostname"].'\'');
+		$hostnamecheck_arr=$hostnamecheck->fetchAll();
 		
 		/*If the field "hostname" change and not blank*/
 		if($_POST['hostname']!="" && $_POST['hostname']!=$usercheck_arr[0]['hostname']) {
-			if(count($hostnamecheck_arr)==0)
+			if(doubleDomainCheck($_POST['hostname']))
 			{
 				/*Check user password */
 				if(md5($_POST['oldpassword'])==$usercheck_arr[0]['password']) {
-					$update = "UPDATE user_list SET hostname =  :hostname WHERE id = :id;";
-					$stmt = $db->prepare($update);
-					
-					$stmt->bindParam(':hostname', $_POST['hostname']);
-					$stmt->bindParam(':id', $usercheck_arr[0]['id']);
-					
-					if($stmt->execute()==FALSE) {
-						$err="Something wrong with PDO operation. =(";
-					}
-					/*$update = "UPDATE user_list SET fullname =  :fullname WHERE id = :id;";
-					$stmt = $db->prepare($update);
-					
-					$stmt->bindParam(':fullname', $_POST['fullname']);
-					$stmt->bindParam(':id', $usercheck_arr[0]['id']);
-					
-					if($stmt->execute()==FALSE) {
-						$err="Something wrong with PDO operation. =(";
-					}*/
-					$rmdomain=1;
-					$_SESSION['oldhostname']=$usercheck_arr[0]['hostname'];
-					$hint="Hostname successful change! <br> Don't forget to do \"sudo make clean\" and restart the daemon!";
+					updatePersonalDomain_DB($usercheck_arr[0]['id'],$_POST['hostname']);
+					$_SESSION['oldhostname']=$usercheck_arr[0]['hostname'];	
 				}
-			} else {
-				$err = "The hostname was already registered.";
 			}
 		}
-		
 		/*If user set a newpassword*/
 		if(isset($_POST['newpassword']) && $_POST['newpassword']!="") {
 			/*If both the password field is the same*/
 			if($_POST['newpassword']==$_POST['cm_newpassword']) {
-				/*If the password match the password in db.*/
-				if(md5($_POST['oldpassword'])==$usercheck_arr[0]['password']) {
-					$update = "UPDATE user_list SET password =  :password WHERE id = :id;";
-					$stmt = $db->prepare($update);
-					
-					$stmt->bindParam(':password', md5($_POST['newpassword']));
-					$stmt->bindParam(':id', $usercheck_arr[0]['id']);
-					
-					if($stmt->execute()==FALSE) {
-						$err="Something wrong with PDO operation. =(";
-					}
-					
-					$hint4="Password successful change!";
-				} else { 
-					$err4="Password incorrect!";
-				}
+				updateUserPass($usercheck_arr[0]['id'],$_POST['oldpassword'],$_POST['newpassword']);
 			} else {
-				$err4="Password not match!";
+				$err="Password not match!";
 			}
 		}
 		
@@ -85,21 +36,15 @@
 		{
 			$usercheck=$db->query('SELECT * FROM user_list WHERE name =\''.$_SESSION['user'].'\'');
 			$usercheck_arr=$usercheck->fetchAll();
-			
-			if(count($usercheck_arr)==0)
-			{
-				$err="Something wrong! :(((";
-			}	
 		}
 		
 		$db = null;
 	}
 	catch (PDOException $e)
     {
-	    echo 'DB operation failed!<br>' . $e->getMessage () . '<br>';
+	    $err = 'Database operation failed!<br>' . $e->getMessage () . '<br>';
 	    $db = null;
-    }
-	
+    }	
 ?>
 <!doctype html>
 <html>
@@ -153,60 +98,19 @@
 		</table>
     </form>
     <?php if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php } ?>
-    <?php if(isset($hint)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint; ?></p><?php } ?>
-    <?php if(isset($hint4)) { ?><p style="text-align:center; color:#F90;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint4; ?></p><?php } ?>
-    <?php if(isset($err4)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err4; ?></p><?php } ?>
 </div>
-<p>&nbsp;  </p>
+<p>&nbsp; </p>
 <div class="log">
 	<h3 style="text-align:center;">Action Log</h3>
 	<?php
-    if(file_exists("/tmp/tmp_nsupdate_".$_SESSION['user']))
-    {
-        if(unlink("/tmp/tmp_nsupdate_".$_SESSION['user']))
-            $hint1 = "Delete tmp file.<br>";
-        else
-            $err1 = "Delete tmp file error!(file not found?)<br>";
-    }
-	if(isset($hint1)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint1; ?></p><?php } 
-	if(isset($err1)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err1; ?></p><?php }
+	clearActionTmp($_SESSION['user']);
 	
-    if($rmdomain==1)
-    {
-        $file=fopen("/tmp/tmp_nsupdate_".$_SESSION['user'],"w");
-        fprintf($file,"server net.nsysu.edu.tw\n");
-        fprintf($file,"zone net.nsysu.edu.tw\n");
-        fprintf($file,"update delete %s.net.nsysu.edu.tw\n",$_SESSION['oldhostname']);
-        fprintf($file,"send\n");
-        $hint2 = "Script file created.";
-		unset($_SESSION['oldhostname']);
-    }
-	if(isset($hint2)) { ?><p style="text-align:center; color:#3C0;"><?php echo $hint2; ?></p><?php }
+	$data[0]['hostname']=$_SESSION['oldhostname'];
+	createDelTmp($_SESSION['user'],$data);
+	unset($_SESSION['oldhostname']);
     
-    if(file_exists("/tmp/tmp_nsupdate_".$_SESSION['user']))
-    {
-        $output=nl2br(shell_exec("/usr/bin/sudo /usr/bin/nsupdate -d -k /etc/bind/Knet.nsysu.+157+55142.key /tmp/tmp_nsupdate_".$_SESSION['user']));
-        if($output)
-        {
-            //echo "<li>".$output."</li>";
-            $hint3 = "Old domain deleted.";
-        } else {
-            $err3 = "Something failed?...";
-        }
-    }
-	if(isset($hint3)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint3; ?></p><?php }
-	if(isset($err3)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err3; ?></p><?php }
+	execDNSaction($_SESSION['user'],"deleted");
 ?>
 </div>
-<?php /*
-<p>&nbsp;</p>
-<div class="log">
-	<h3 style="text-align:center;">Debug Log</h3>
-    <?php if(count($_POST)>0){ foreach($_POST as $k=>$v){ echo $k."=".$v."<br>"; } } ?>
-    <?php var_dump($usercheck_arr); ?>
-    <?php var_dump($_SESSION); ?>
-	
-</div>
-*/ ?>
 </body>
 </html>

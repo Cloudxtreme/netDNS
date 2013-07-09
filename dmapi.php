@@ -23,7 +23,10 @@ function doubleDomainCheck($host)
 		{
 			return 1;
 		}
+	} else {
+		$err = "The hostname was already registered.";
 	}
+	if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php }
 }
 
 function addUser($name,$pass,$host,$fullname)
@@ -97,6 +100,29 @@ function delUser($id)
 	} else {
 		$err="No user found!";
 	}
+}
+
+function updateUserPass($id,$oldpass,$newpass)
+{
+	global $usercheck_arr;
+	/*If the password match the password in db.*/
+	if(md5($oldpass)==$usercheck_arr[0]['password']) {
+		$update = "UPDATE user_list SET password =  :password WHERE id = :id;";
+		$stmt = $db->prepare($update);
+		
+		$stmt->bindParam(':password', md5($newpass));
+		$stmt->bindParam(':id', $id);
+		
+		if($stmt->execute()==FALSE) {
+			$err="Something wrong with PDO operation. =(";
+		}
+		
+		$hint="Password changed successful!";
+	} else { 
+		$err="Password incorrect!";
+	}
+	if(isset($hint)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint; ?></p><?php } 
+	if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php }
 }
 
 function addPublicDomain_DB($creator,$type,$host,$ip) //Pass domain information
@@ -175,9 +201,27 @@ function updatePublicDomain_DB($id,$ip)
 	
 	if($stmt->execute()==FALSE) {
 		$err="Something wrong with PDO operation. =(";
+	} else {
+		global $runaction;
+		$runaction=1;
 	}
-	global $runaction;
-	$runaction=1;
+}
+
+function updatePersonalDomain_DB($id,$host)
+{
+	$update = "UPDATE user_list SET hostname =  :hostname WHERE id = :id;";
+	$stmt = $GLOBALS['db']->prepare($update);
+	
+	$stmt->bindParam(':hostname', $host);
+	$stmt->bindParam(':id', $id);
+	
+	if($stmt->execute()==FALSE) {
+		$err="Something wrong with PDO operation. =(";
+	} else {
+		global $runaction;
+		$runaction=1;
+		$hint="Hostname successful change! <br> Don't forget to restart the daemon!";
+	}
 }
 
 function clearActionTmp($user)
