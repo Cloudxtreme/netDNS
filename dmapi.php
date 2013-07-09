@@ -106,9 +106,10 @@ function updateUserPass($id,$oldpass,$newpass)
 	/*If the password match the password in db.*/
 	if(md5($oldpass)==$usercheck_arr[0]['password']) {
 		$update = "UPDATE user_list SET password =  :password WHERE id = :id;";
-		$stmt = $db->prepare($update);
+		$stmt = $GLOBALS['db']->prepare($update);
 		
-		$stmt->bindParam(':password', md5($newpass));
+		$password=md5($newpass);
+		$stmt->bindParam(':password', $password);
 		$stmt->bindParam(':id', $id);
 		
 		if($stmt->execute()==FALSE) {
