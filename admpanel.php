@@ -72,18 +72,18 @@
         <h1 style="text-align:center;">Create Account</h1>
         <h4 style="text-align:center;">DDNS Service</h4>
         <form class="regi" method="post" id="ddnsacc">
-        	<font color="#FF0000">* means the required field.</font>
+            <span style="color:#F00;">* means the required field.</span>
             <table class="table">
                 <tr>
-                    <td style="text-align:right;"><font color="#FF0000">*</font>Username:</td>
+                    <td style="text-align:right;"><span style="color:#F00;">*</span>Username:</td>
                     <td><input style="width:100px;" type="text" name="name" placeholder="[Max char.:20]" required></td>
                 </tr>
                 <tr>
-                    <td style="text-align:right;"><font color="#FF0000">*</font>Full name:</td>
+                    <td style="text-align:right;"><span style="color:#F00;">*</span>Full name:</td>
                     <td><input style="width:100px;" type="text" name="fullname" placeholder="[Max char.:20]" required></td>
                 </tr>
                 <tr>
-                    <td style="text-align:right;"><font color="#FF0000">*</font>Password:</td>
+                    <td style="text-align:right;"><span style="color:#F00;">*</span>Password:</td>
                     <td><input style="width:110px;" type="password" name="password" placeholder="[Max char.:30]" required></td>
                 </tr>
                 <tr>
@@ -121,7 +121,7 @@
                 <td style="text-align:center;"><?php echo $row['hostname']; ?></td>         
                 <td style="text-align:center;"><input style="width:110px" name="ip" type="text" value="<?php echo $row['ip']; ?>"></td>
                 <td style="text-align:center;"><input class="btn btn-warning" type="submit" value="Go!" onclick="if(confirm('Do you really want to update with new IP?')) return true;else return false"></td>
-                <td style="text-align:center;"><a href="deldom.php?id=<?php echo $row['id']; ?>"><img width="30" src="img/del.png" onclick="if(confirm('Do you really want to remove this domain?')) return true;else return false"></a></td>
+                <td style="text-align:center;"><a href="deldom.php?id=<?php echo $row['id']; ?>"><img alt="remove" style="width:30px;" src="img/del.png" onclick="if(confirm('Do you really want to remove this domain?')) return true;else return false"></a></td>
             </tr>
     <?php } ?>
         </table>
@@ -137,7 +137,7 @@
                 </tr>
              	<tr>
                     <td style="text-align:right;">Type</td>
-                    <td><select style="width:45px;" name="pub_type" size="1"><option>A</option><option>C</option></select>&nbsp;&nbsp;(A = A Record, C = CNAME Record)</td>
+                    <td><select style="width:50px;" name="pub_type" size="1"><option>A</option><option>C</option></select>&nbsp;&nbsp;(A = A Record, C = CNAME Record)</td>
                 </tr>
                 <tr>
                     <td style="text-align:right;">IP/Alias</td>
@@ -167,18 +167,18 @@
                 <td style="text-align:center;"><?php echo $row['id']; ?></td>
                 <td style="text-align:center;"><?php echo $row['name']; ?></td>
                 <td style="text-align:center;"><?php echo $row['fullname']; ?></td>
-                <td style="text-align:center;"><a href="rstAccPass.php?id=<?php echo $row['id']; ?>"><img width="30" src="img/reset.png" onclick="if(confirm('Do you really want to reset user password to 1234?')) return true;else return false"></a></td>
+                <td style="text-align:center;"><a href="rstAccPass.php?id=<?php echo $row['id']; ?>"><img alt="PSreset" style="width:30px;" src="img/reset.png" onclick="if(confirm('Do you really want to reset user password to 1234?')) return true;else return false"></a></td>
                 <td style="text-align:center;"><?php echo $row['hostname']; ?></td>
                 <td style="text-align:center;">
                     <?php if($row['admin']==1) { 
-    ?>				<img width="30" src="img/adm.png">
+    ?>				<img alt="Admin" src="img/adm.png" style="width:30px;">
     <?php 			if($_SESSION['user']!=$row['name']) { ?>
-                        &nbsp;<a href="authadm.php?id=<?php echo $row['id']; ?>&act=0"><img width="30" src="img/ban.png"></a>
-    <?php				} } else {?><a href="authadm.php?id=<?php echo $row['id']; ?>&act=1"><img width="30" src="img/key.png"></a><?php } ?>
+                        &nbsp;<a href="authadm.php?id=<?php echo $row['id']; ?>&act=0"><img alt="RmAdm" style="width:30px;" src="img/ban.png"></a>
+    <?php				} } else {?><a href="authadm.php?id=<?php echo $row['id']; ?>&act=1"><img alt="AddAdm" style="width:30px;" src="img/key.png"></a><?php } ?>
                 </td>
                 <td style="text-align:center;">
                     <?php if($row['name']!=$_SESSION['user']) {
-    ?>            	<a href="delacc.php?id=<?php echo $row['id']; ?>"><img width="30" src="img/del.png" onclick="if(confirm('Do you really want to remove this user?')) return true;else return false"></a><?php } ?>
+    ?>            	<a href="delacc.php?id=<?php echo $row['id']; ?>"><img alt="remove" style="width:30px;" src="img/del.png" onclick="if(confirm('Do you really want to remove this user?')) return true;else return false"></a><?php } ?>
                 </td>
             </tr>
     <?php } ?>
