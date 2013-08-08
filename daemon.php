@@ -26,37 +26,36 @@
    <div class="main">
    		<h1 style="text-align:center;">DDNS Daemon Download</h1>
 		<h4 style="text-align:center;">net.nsysu.edu.tw</h4>
-        <table class="table">
+        <table class="table" style="margin:auto;">
         	<tr>
-            	<td style="text-align:center;"><a href="dist/ddns_daemon_linux.tar"><img src="img/tux.png"></a></td>
-                <td style="text-align:center;"><a href="dist/ddns_daemon_rPi.tar"><img width="130" src="img/rPi.png"></a></td>
+            	<td style="text-align:center;"><a href="dist/daemon.c"><img src="img/code.png"></a><br>請按右鍵「另存目標」</td>
             </tr>
         </table>
    </div>
     <div class="main" style="padding:10px; line-height:1.8;">
         <h1 style="text-align:center;">DDNS Daemon Readme</h1>
         <h4 style="text-align:center;">net.nsysu.edu.tw</h4>
-        <p style="font-size:16px; color:#F90;">安裝須知：</p>
-        1.本工具指令會額外在你的電腦安裝兩個套件：<font color="#FF0000">dnsutils, screen</font><br />
-        2.請先確認你已經有註冊一個hostname（可以從個人domain管理頁面確認）</font> <br />
+        <p style="font-size:16px; color:#F90;">使用須知：</p>
+        1.請先確認你已經有註冊一個hostname（可以從個人domain管理頁面確認）</font> <br />
+        2.電腦需有可編譯C程式的環境，以及 <font color="#FF0000">libssl-dev libcurl4-openssl-dev</font> 的編譯函式庫</font> <br />
         3.hostname不可以超過20個字元<br />
-        <p style="font-size:16px; color:#F90;">安裝步驟：</p>
-        1.請自行選取一個位置解壓縮檔案包： <font color="#3333FF">tar -xvf ddns_daemon_(依版本自行更改).tar</font><br />
-        2.請下「<font color="#3333FF">sudo make install</font>」指令 (目前只適用Debian 系列Linux系統，其他系統需使用emerge or yum）<br />
-        3.請依據平台執行daemon: <font color="#3333FF">sudo ./ddaemon_(x86 or x64)</font><br />  <br /> 
-        <p style="font-size:16px; color:#F90;">開機自動執行：</p>
+        <p style="font-size:16px; color:#F90;">編譯程式：</p>
+        1.編譯指令： <font color="#3333FF">gcc -o ddns_daemon daemon.c -lcrypto -lcurl</font><br />
+        3.執行daemon： <font color="#3333FF">sudo ./ddns_daemon</font><br />  <br /> 
+        <p style="font-size:16px; color:#F90;">開機自動執行： (Use Ubuntu as example)</p>
         請在 <font color="#3333FF">/etc/rc.local</font> 加上（加在exit;上方）：
-        <pre><font color="#FF0000">screen -d -m 解壓縮後的目錄/ddaemon_(x86 or x64 or rPi)</font></pre>
-        <p style="font-size:16px; color:#F90;">移除工具：</p>
-        執行指令: <font color="#3333FF">sudo make uninstall</font>
-        <p style="font-size:16px; color:#F90;">如果程式執行異常：</p>
-        執行指令: <font color="#3333FF">make clean</font>
+        <pre><font color="#FF0000">screen -d -m 程式放置目錄/ddns_daemon</font></pre>
+        <p style="font-size:16px; color:#F90;">如果程式執行異常、想要登出原有帳號：</p>
+        執行指令： <font color="#3333FF">rm -f /dnsd/.login /dnsd/.last_ip_record /dnsd/tmp_nsupdate</font>
     </div>
     <p>&nbsp;</p>
 	<div class="main">
     	<h1 style="text-align:center;">Update Logs</h1>
 		<h4 style="text-align:center;">net.nsysu.edu.tw</h4>
-        2013.07.28 Change Daemon SQL connection to HTTP connection
+        <ul>
+        	<li>2013.08.08 Change structure and release source code</li>
+        	<li>2013.07.28 Change Daemon SQL connection to HTTP connection</li>          
+        </ul>
     </div>
 </body>
 </html>
