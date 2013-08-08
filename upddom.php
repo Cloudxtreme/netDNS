@@ -18,7 +18,7 @@
 <body>
 <p style="text-align:right; padding-right:50px"><a href="admpanel.php">[Admin Panel]</a>&nbsp;<a href="udomain.php">[Personal Domain]</a>&nbsp;<a href="logout.php">[Logout]</a></p>
 <div class="main">
-	<h1 style="text-align:center;">Delete Public Domain</h1>
+	<h1 style="text-align:center;">Update Public Domain</h1>
     <h4 style="text-align:center;">net.nsysu.edu.tw</h4>
 </div>
 <p>&nbsp;</p>
