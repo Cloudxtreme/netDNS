@@ -328,4 +328,25 @@ function execDNSaction($user,$action) //Pass $_SESSION['user'] & action string
 	if(isset($hint)) { ?><p style="text-align:center; color:#3C0;"><img width="50" src="img/good.png"> &nbsp; <?php echo $hint; ?></p><?php }
 	if(isset($err)) { ?><p style="text-align:center; color:#F00;"><img width="50" src="img/sad.png"> &nbsp; <?php echo $err; ?></p><?php }
 }
+
+function daemonAction($hostname,$ip)
+{
+	$file=fopen("/tmp/tmp_nsupdate_".$hostname,"w");
+	fprintf($file,"server net.nsysu.edu.tw\n");
+	fprintf($file,"zone net.nsysu.edu.tw\n");
+	fprintf($file,"update delete %s.net.nsysu.edu.tw\n",$hostname);
+	fprintf($file,"update add %s.net.nsysu.edu.tw 604800 A %s\n",$hostname,$ip);
+	fprintf($file,"send\n");
+	
+	if(file_exists("/tmp/tmp_nsupdate_".$hostname))
+    {
+        $output=nl2br(shell_exec("/usr/bin/sudo /usr/bin/nsupdate -d -k /etc/bind/Knet.nsysu.+157+55142.key /tmp/tmp_nsupdate_".$hostname));
+        if($output)
+        {
+            echo "ok";
+        } else {
+            echo "ERR3";
+        }
+    }
+}
 ?>
