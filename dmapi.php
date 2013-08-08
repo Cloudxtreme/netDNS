@@ -316,7 +316,7 @@ function execDNSaction($user,$action) //Pass $_SESSION['user'] & action string
 {
 	if(file_exists("/tmp/tmp_nsupdate_".$user))
     {
-        $output=nl2br(shell_exec("/usr/bin/sudo /usr/bin/nsupdate -d -k /etc/bind/Knet.nsysu.+157+55142.key /tmp/tmp_nsupdate_".$user));
+        $output=nl2br(shell_exec("/usr/bin/sudo /usr/bin/nsupdate -d -k /etc/bind/Knet.nsysu.+157+44387.key /tmp/tmp_nsupdate_".$user));
         if($output)
         {
             //echo "<li>".$output."</li>";
@@ -340,7 +340,7 @@ function daemonAction($hostname,$ip)
 	
 	if(file_exists("/tmp/tmp_nsupdate_".$hostname))
     {
-        $output=nl2br(shell_exec("/usr/bin/sudo /usr/bin/nsupdate -d -k /etc/bind/Knet.nsysu.+157+55142.key /tmp/tmp_nsupdate_".$hostname));
+        $output=nl2br(shell_exec("/usr/bin/sudo /usr/bin/nsupdate -d -k /etc/bind/Knet.nsysu.+157+44387.key /tmp/tmp_nsupdate_".$hostname));
         if($output)
         {
             echo "ok";
