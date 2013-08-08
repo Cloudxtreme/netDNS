@@ -25,7 +25,7 @@
     <h4 style="text-align:center;color:#F5F5F5;">net.nsysu.edu.tw</h4>
     <p>&nbsp;</p>
     <?php /*======================== Action Log Block (DB action)========================*/ ?>
-    <div class="main" style="height:280px;float:right; position:relative; top:820px; overflow:auto; <?php /*if(isset($err) || isset($hint)) { ?> opacity:1; <?php } else { ?> opacity:0.8; <?php }*/ ?> ">
+    <div class="main" style="height:280px;float:right; position:relative; top:820px; overflow:auto; margin-bottom:20px;<?php /*if(isset($err) || isset($hint)) { ?> opacity:1; <?php } else { ?> opacity:0.8; <?php }*/ ?> ">
         <h1 style="text-align:center;">Action Log</h1>
         <?php
 			clearActionTmp($_SESSION['user']);
@@ -99,7 +99,7 @@
     </div>
     
     <?php /*======================== Public Domain Block ========================*/ ?>
-    <div class="main" style="height:780px;float:right; position:relative; top:-310px; overflow:auto;">
+    <div class="main" style="height:780px;float:right; position:relative; top:-330px; overflow:auto;">
         <h1 style="text-align:center;">Public Domain</h1>
         
         <form method="post" id="upddom" action="upddom.php">

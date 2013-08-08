@@ -48,8 +48,7 @@
         <p style="font-size:16px; color:#F90;">如果程式執行異常、想要登出原有帳號：</p>
         執行指令： <font color="#3333FF">rm -f /dnsd/.login /dnsd/.last_ip_record /dnsd/tmp_nsupdate</font>
     </div>
-    <p>&nbsp;</p>
-	<div class="main">
+	<div class="main" style="margin-bottom:20px;">
     	<h1 style="text-align:center;">Update Logs</h1>
 		<h4 style="text-align:center;">net.nsysu.edu.tw</h4>
         <ul>
